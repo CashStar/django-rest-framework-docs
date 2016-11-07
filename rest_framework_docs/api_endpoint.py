@@ -41,11 +41,12 @@ class ApiEndpoint(object):
             serializer = self.callback.cls.serializer_class
             if hasattr(serializer, 'get_fields'):
                 try:
-                    fields = [{
-                        "name": key,
-                        "type": str(field.__class__.__name__),
-                        "required": field.required
-                    } for key, field in serializer().get_fields().items()]
+                    for key, field in serializer().get_fields().items():
+                        fields.append({
+                            "name": key,
+                            "type": str(field.__class__.__name__),
+                            "required": field.required if hasattr(field, 'required') else None,
+                        })
                 except KeyError as e:
                     self.errors = e
                     fields = []
